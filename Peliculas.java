@@ -1,3 +1,8 @@
+import java.sql.Connection;
+import java.sql.DriverManager;
+import java.sql.PreparedStatement;
+import java.sql.SQLException;
+
 public class Peliculas {
     int id, anio;
     String titulo, director, genero, sinopsis;
@@ -59,5 +64,32 @@ public class Peliculas {
 
     public void setSinopsis(String sinopsis) {
         this.sinopsis = sinopsis;
+    }
+
+    public boolean insertarItemBDD(String titulo, String director, int año, String genero, String sinopsis){
+        try (Connection connection = DriverManager.getConnection(
+                "jdbc:mysql://localhost:3306/peliculas",
+                "root", "123456")) {
+            //Crear consulta de insercion con parametros
+            String sql = "INSERT INTO pelicula1(titulo, director, año, genero,sinpsis) VALUES (?, ?, ?, ?, ?)";
+            try (PreparedStatement preparedStatement = connection.prepareStatement(sql)) {
+                preparedStatement.setString(1, titulo);
+                preparedStatement.setString(2, director);
+                preparedStatement.setDouble(3, año);
+                preparedStatement.setString(4, genero);
+                preparedStatement.setString(5, sinopsis);
+                //Ejecutar la consulta de insercion
+                int filasAfectadas = preparedStatement.executeUpdate();
+
+                if (filasAfectadas > 0) {
+                    System.out.println("Inserción exitosa");
+                } else {
+                    System.out.println("Inserción fallida");
+                }
+            }
+        }catch (SQLException e) {
+            e.printStackTrace();
+        }
+        return true;
     }
 }
